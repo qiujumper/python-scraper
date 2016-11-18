@@ -1,5 +1,17 @@
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
-html = urlopen('http://www.pythonscraping.com/pages/page1.html');
-bsObj = BeautifulSoup(html.read())
-print(bsObj.h1)
+from urllib.error import HTTPError, URLError
+#先判断是否能获取页面
+def scraper():
+    try:
+        html = urlopen('http://nn.focus.cn/xxsearch/index.html');
+    #这个判断只能判定是不是404或者500的错误，如果DNS没法解析，是无法判定的
+    except HTTPError as e:
+        print('can not find web page')
+        print(e)
+        #print('ccc')
+    else: 
+        bsObj = BeautifulSoup(html.read())
+        print(bsObj.h1)
+
+if __name__ == '__main__': scraper()
