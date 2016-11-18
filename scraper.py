@@ -14,17 +14,31 @@ import datetime
 
 #你自己的配置文件，请将config-sample.py重命名为config.py,然后填写对应的值即可
 import config
-def scraper():
-    #定义链接集合，以免链接重复
-    pages = set()
-    session = requests.Session()
 
+#定义链接集合，以免链接重复
+pages = set()
+session = requests.Session()
+
+
+#获取所有列表页连接
+def getAllPages():
+    pageList = []
+    i = 1
+    while(i < 5):
+        newLink = 'http://nn.focus.cn/search/index_p' + str(i) +'.html'
+        pageList.append(newLink)
+        i = i + 1
+    return pageList
+
+#获取当前页面的所有连接
+def getItemLinks(url):
+    global pages;
     #先判断是否能获取页面
     try:
-        req = session.get(config.value['url'], headers = config.value['headers'])
+        req = session.get(url, headers = config.value['headers'])
     #这个判断只能判定是不是404或者500的错误，如果DNS没法解析，是无法判定的
     except IOError as e:
-        print('can not reach the page【/(ㄒoㄒ)/~~】')
+        print('can not reach the page. ')
         print(e)
     
     else: 
@@ -37,17 +51,22 @@ def scraper():
         for houseItem in houseItems:
             houseUrl = houseItem.find('a', {'class','_click'})['href']
             pages.add(houseUrl)
-        print(pages)
+        
 
-    def getItemDetails(url):
-        #先判断是否能获取页面
-        try:
-            html = urlopen(url);
-        #这个判断只能判定是不是404或者500的错误，如果DNS没法解析，是无法判定的
-        except IOError as e:
-            print('can not reach the page【/(ㄒoㄒ)/~~】')
-            print(e)
+def getItemDetails(url):
+    #先判断是否能获取页面
+    try:
+        html = urlopen(url);
+    #这个判断只能判定是不是404或者500的错误，如果DNS没法解析，是无法判定的
+    except IOError as e:
+        print('can not reach the page. ')
+        print(e)
 
 
+#start to run the code
+allPages = getAllPages()
 
-if __name__ == '__main__': scraper()
+for i in allPages:
+    getItemLinks(i)
+#此时pages 应该充满了很多url的内容
+
