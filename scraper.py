@@ -19,7 +19,7 @@ import config
 #定义链接集合，以免链接重复
 pages = set()
 session = requests.Session()
-baseUrl = 'http://imgs.focus.cn'
+baseUrl = 'http://pic1.ajkimg.com'
 downLoadDir = 'images'
 
 #获取所有列表页连接
@@ -27,7 +27,7 @@ def getAllPages():
     pageList = []
     i = 1
     while(i < 3):
-        newLink = 'http://nn.focus.cn/search/index_p' + str(i) +'.html'
+        newLink = 'http://sh.fang.anjuke.com/loupan/all/p' + str(i) + '/'
         pageList.append(newLink)
         i = i + 1
     return pageList
@@ -69,13 +69,16 @@ def getItemLinks(url):
     else: 
         bsObj = BeautifulSoup(req.text)
         #获取第一页的所有房子模块
-        houseItems = bsObj.select('.s-lp-list .lp-list-li')
+        houseItems = bsObj.select('.item-mod')
 
         #从模块中提取我们需要的信息，比如详情页的URL,价格，略缩图等
         #我倾向只获取详情页的URL，然后在详情页中获取更多的信息
         for houseItem in houseItems:
-            houseUrl = houseItem.find('a', {'class','_click'})['href']
-            pages.add(houseUrl)
+            if houseItem.find('a', {'class','items-name'}) == None:
+                houseUrl = '';
+            else:
+                houseUrl = houseItem.find('a', {'class','items-name'})['href']
+                pages.add(houseUrl)
         
 #获取详情页的各种字段，这里可以让用户自己编辑
 def getItemDetails(url):
@@ -87,12 +90,19 @@ def getItemDetails(url):
         print('can not reach the page. ')
         print(e)
     else:
-        time.sleep(2)
+        time.sleep(1)
         bsObj = BeautifulSoup(req.text)
         houseTitle = bsObj.find('h1').text
-        housePrice = bsObj.find('div',{'class','lp-price-left'}).find('strong')
-        #houseThumbnail = bsObj.find('div', {'id', 'bigPic'}).find('image')['src']
-        print(housePrice)
+        if bsObj.find('em',{'class','sp-price'}) == None:
+            housePrice = 'None'
+        else:
+            housePrice = bsObj.find('em',{'class','sp-price'}).text;
+        # if bsObj.select('.con a:first-child .item img')== None:
+        #     houseThumbnail = 'None'
+        # else:
+        #     houseThumbnail = bsObj.select('.con a:first-child .item img');
+
+        print(houseTitle + '--' + housePrice )
 
 
 #start to run the code
@@ -103,4 +113,5 @@ for i in allPages:
 #此时pages 应该充满了很多url的内容
 for i in pages:
     getItemDetails(i)
+#print(pages)
 
