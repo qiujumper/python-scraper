@@ -11,6 +11,7 @@ import re
 import random
 #获取日期
 import datetime
+import time
 
 #你自己的配置文件，请将config-sample.py重命名为config.py,然后填写对应的值即可
 import config
@@ -18,17 +19,41 @@ import config
 #定义链接集合，以免链接重复
 pages = set()
 session = requests.Session()
-
+baseUrl = 'http://imgs.focus.cn'
+downLoadDir = 'images'
 
 #获取所有列表页连接
 def getAllPages():
     pageList = []
     i = 1
-    while(i < 5):
+    while(i < 3):
         newLink = 'http://nn.focus.cn/search/index_p' + str(i) +'.html'
         pageList.append(newLink)
         i = i + 1
     return pageList
+
+def getAbsoluteURL(baseUrl, source):
+    if source.startswith("http://www."):
+        url = "http://"+source[11:] 
+    elif source.startswith("http://"):
+        url = source
+    elif source.startswith("www."):
+        url = "http://"+source[4:] 
+    else:
+        url = baseUrl+"/"+source 
+    if baseUrl not in url:
+        return None 
+    return url
+
+
+def getDownloadPath(baseUrl, absoluteUrl, downloadDirectory): 
+    path = absoluteUrl.replace("www.", "")
+    path = path.replace(baseUrl, "")
+    path = downloadDirectory+path
+    directory = os.path.dirname(path)
+    if not os.path.exists(directory): 
+        os.makedirs(directory)
+    return path
 
 #获取当前页面的所有连接
 def getItemLinks(url):
@@ -52,15 +77,22 @@ def getItemLinks(url):
             houseUrl = houseItem.find('a', {'class','_click'})['href']
             pages.add(houseUrl)
         
-
+#获取详情页的各种字段，这里可以让用户自己编辑
 def getItemDetails(url):
     #先判断是否能获取页面
     try:
-        html = urlopen(url);
+        req = session.get(url, headers = config.value['headers'])
     #这个判断只能判定是不是404或者500的错误，如果DNS没法解析，是无法判定的
     except IOError as e:
         print('can not reach the page. ')
         print(e)
+    else:
+        time.sleep(2)
+        bsObj = BeautifulSoup(req.text)
+        houseTitle = bsObj.find('h1').text
+        housePrice = bsObj.find('div',{'class','lp-price-left'}).find('strong')
+        #houseThumbnail = bsObj.find('div', {'id', 'bigPic'}).find('image')['src']
+        print(housePrice)
 
 
 #start to run the code
@@ -69,4 +101,6 @@ allPages = getAllPages()
 for i in allPages:
     getItemLinks(i)
 #此时pages 应该充满了很多url的内容
+for i in pages:
+    getItemDetails(i)
 
