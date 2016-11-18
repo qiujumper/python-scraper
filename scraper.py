@@ -9,7 +9,10 @@ def scraper():
     except HTTPError as e:
         print('can not find web page')
         print(e)
-        #print('ccc')
+    
+    #通用的错误检查
+    except:
+        print(e)
     else: 
         bsObj = BeautifulSoup(html.read())
         print(bsObj.h1)
