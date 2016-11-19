@@ -11,6 +11,8 @@ import random
 #获取日期
 import datetime
 import time
+#引入系统对象
+import os
 
 #你自己的配置文件，请将config-sample.py重命名为config.py,然后填写对应的值即可
 import config
@@ -25,7 +27,7 @@ downLoadDir = 'images'
 def getAllPages():
     pageList = []
     i = 1
-    while(i < 3):
+    while(i < 2):
         newLink = 'http://sh.fang.anjuke.com/loupan/all/p' + str(i) + '/'
         pageList.append(newLink)
         i = i + 1
@@ -97,8 +99,9 @@ def getItemDetails(url):
 
         #get image url
         houseImage = h('.con a:first-child img').attr('src')
-        print(houseImage)
-     
+        houseImageUrl = getAbsoluteURL(baseUrl, houseImage)
+        if houseImageUrl != None:
+            urlretrieve(houseImageUrl, getDownloadPath(baseUrl, houseImageUrl, downLoadDir))     
         # if bsObj.find('em',{'class','sp-price'}) == None:
         #     housePrice = 'None'
         # else:
