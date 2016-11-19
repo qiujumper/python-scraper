@@ -1,10 +1,9 @@
 #获取页面对象
 from urllib.request import urlopen
 from urllib.request import urlretrieve
+from pyquery import PyQuery as pq
 #修改请求头模块,模拟真人访问
 import requests
-#选择器
-from bs4 import BeautifulSoup
 #正则对象
 import re
 #获取随机数
@@ -67,18 +66,15 @@ def getItemLinks(url):
         print(e)
     
     else: 
-        bsObj = BeautifulSoup(req.text)
+        h = pq(req.text)
         #获取第一页的所有房子模块
-        houseItems = bsObj.select('.item-mod')
-
+        houseItems = h('.item-mod')
         #从模块中提取我们需要的信息，比如详情页的URL,价格，略缩图等
         #我倾向只获取详情页的URL，然后在详情页中获取更多的信息
-        for houseItem in houseItems:
-            if houseItem.find('a', {'class','items-name'}) == None:
-                houseUrl = '';
-            else:
-                houseUrl = houseItem.find('a', {'class','items-name'})['href']
-                pages.add(houseUrl)
+        for houseItem in houseItems.items():
+            houseUrl = houseItem.find('.items-name').attr('href')
+            #print(houseUrl)
+            pages.add(houseUrl)
         
 #获取详情页的各种字段，这里可以让用户自己编辑
 def getItemDetails(url):
@@ -91,18 +87,28 @@ def getItemDetails(url):
         print(e)
     else:
         time.sleep(1)
-        bsObj = BeautifulSoup(req.text)
-        houseTitle = bsObj.find('h1').text
-        if bsObj.find('em',{'class','sp-price'}) == None:
-            housePrice = 'None'
-        else:
-            housePrice = bsObj.find('em',{'class','sp-price'}).text;
+        h = pq(req.text)
+
+        #get title
+        housePrice = h('h1').text() if h('h1') != None else 'none'
+
+        #get price
+        housePrice = h('.sp-price').text() if h('.sp-price') != None else 'none'
+
+        #get image url
+        houseImage = h('.con a:first-child img').attr('src')
+        print(houseImage)
+     
+        # if bsObj.find('em',{'class','sp-price'}) == None:
+        #     housePrice = 'None'
+        # else:
+        #     housePrice = bsObj.find('em',{'class','sp-price'}).text;
         # if bsObj.select('.con a:first-child .item img')== None:
         #     houseThumbnail = 'None'
         # else:
         #     houseThumbnail = bsObj.select('.con a:first-child .item img');
 
-        print(houseTitle + '--' + housePrice )
+        
 
 
 #start to run the code
