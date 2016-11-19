@@ -4,12 +4,6 @@ from urllib.request import urlretrieve
 from pyquery import PyQuery as pq
 #修改请求头模块,模拟真人访问
 import requests
-#正则对象
-import re
-#获取随机数
-import random
-#获取日期
-import datetime
 import time
 #引入系统对象
 import os
