@@ -96,14 +96,7 @@ def getItemDetails(url):
         houseImageUrl = getAbsoluteURL(baseUrl, houseImage)
         if houseImageUrl != None:
             urlretrieve(houseImageUrl, getDownloadPath(baseUrl, houseImageUrl, downLoadDir))     
-        # if bsObj.find('em',{'class','sp-price'}) == None:
-        #     housePrice = 'None'
-        # else:
-        #     housePrice = bsObj.find('em',{'class','sp-price'}).text;
-        # if bsObj.select('.con a:first-child .item img')== None:
-        #     houseThumbnail = 'None'
-        # else:
-        #     houseThumbnail = bsObj.select('.con a:first-child .item img');
+       
 
         
 
