@@ -46,7 +46,7 @@ def getAbsoluteURL(baseUrl, source):
         return None 
     return url
 
-
+#这个函数内部的路径按照自己的真实情况来写，方便之后的数据导入
 def getDownloadPath(baseUrl, absoluteUrl, downloadDirectory): 
     path = absoluteUrl.replace("www.", "")
     path = path.replace(baseUrl, "")

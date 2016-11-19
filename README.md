@@ -6,10 +6,16 @@
 
 ##采用的python库
 *   beautifulsoup4
-*   urllib
+*   pyquery
+*   requests
+*   re
+*   random
+*   time
+*   os
+*   datetime
 
 ##备注
-出于伦理道义原因，隐去了目标源的URL，如果您对此项目感兴趣，可以通过简单的配置来完成你自己的爬虫：
+如果您对此项目感兴趣，可以通过简单的配置来完成你自己的爬虫：
 *   将config-sample.py改成config.py
 *   填写目标源URL
 *   对应修改选择器
